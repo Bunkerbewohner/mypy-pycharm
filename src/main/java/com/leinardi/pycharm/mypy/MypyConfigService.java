@@ -30,11 +30,21 @@ public class MypyConfigService implements PersistentStateComponent<MypyConfigSer
     private String mypyConfigFilePath;
     private String mypyArguments;
     private boolean scanBeforeCheckin;
+    private boolean useDaemon;
 
     public MypyConfigService() {
         customMypyPath = "";
         mypyArguments = "";
         mypyConfigFilePath = "";
+        useDaemon = false;
+    }
+
+    public boolean isUseDaemon() {
+        return useDaemon;
+    }
+
+    public void setUseDaemon(boolean useDaemon) {
+        this.useDaemon = useDaemon;
     }
 
     public String getCustomMypyPath() {

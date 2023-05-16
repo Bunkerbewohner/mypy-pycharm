@@ -33,6 +33,8 @@ the Browse button to open a file selection dialog.
 Once you changed the path you should press the Test button to check if the plugin is able to run
 the executable.
 
+Optionally you can enable the use of dmypy - the mypy daemon which drastically speeds up the analysis of large projects. However, this feature is still experimental and can cause some unexpected issues.
+
 ![plugin settings screenshot](https://github.com/leinardi/mypy-pycharm/blob/master/art/mypy-settings.png)
 
 ### Inspection severity

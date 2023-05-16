@@ -40,6 +40,8 @@ import com.leinardi.pycharm.mypy.util.Notifications;
 import org.jdesktop.swingx.util.OS;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -87,12 +89,8 @@ public class MypyRunner {
             return false;
         }
         GeneralCommandLine cmd = getMypyCommandLine(project, mypyPath);
-        boolean daemon = false;
-        if (daemon) {
-            cmd.addParameter("status");
-        } else {
-            cmd.addParameter("-V");
-        }
+        cmd.addParameter("-V");
+
         final Process process;
         try {
             process = cmd.createProcess();
@@ -272,19 +270,30 @@ public class MypyRunner {
         if (filesToScan.isEmpty()) {
             return new ArrayList<>();
         }
-        boolean daemon = false;
+
+        if (mypyConfigService.isUseDaemon()) {
+            // build path to dmypy by assuming that it sits right next to the selected mypy executable
+            // with the only difference being that the name has "dmypy" in it rather than just "mypy"
+            Path p = Paths.get(mypyPath);
+            String dFile = p.getFileName().toString().replace("mypy", "dmypy");
+            mypyPath = Paths.get(p.getParent().toString(), dFile).toString();
+        }
 
         GeneralCommandLine cmd = new GeneralCommandLine(mypyPath);
         cmd.setCharset(UTF_8);
-        if (daemon) {
+        if (mypyConfigService.isUseDaemon()) {
             cmd.addParameter("run");
             cmd.addParameter("--");
-            cmd.addParameter("``--show-column-numbers");
-        } else {
-            cmd.addParameter("--show-column-numbers");
         }
+        cmd.addParameter("--show-column-numbers");
         cmd.addParameter("--follow-imports");
-        cmd.addParameter("silent");
+
+        if (mypyConfigService.isUseDaemon()) {
+            // daemon mode doesn't support silent mode
+            cmd.addParameter("normal");
+        } else {
+            cmd.addParameter("silent");
+        }
 
         injectEnvironmentVariables(project, cmd);
 

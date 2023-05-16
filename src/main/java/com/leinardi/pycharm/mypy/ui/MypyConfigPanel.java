@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.components.JBTextField;
+import com.intellij.ui.components.JBCheckBox;
 import com.leinardi.pycharm.mypy.MypyBundle;
 import com.leinardi.pycharm.mypy.MypyConfigService;
 import com.leinardi.pycharm.mypy.mpapi.MypyRunner;
@@ -39,6 +40,8 @@ public class MypyConfigPanel {
     private com.intellij.openapi.ui.TextFieldWithBrowseButton mypyPathField;
     private com.intellij.openapi.ui.TextFieldWithBrowseButton mypyConfigFilePathField;
     private JBTextField argumentsField;
+
+    private JBCheckBox useDaemonCheckBox;
     private Project project;
 
     public MypyConfigPanel(Project project) {
@@ -66,6 +69,7 @@ public class MypyConfigPanel {
                 TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
         argumentsField.setText(mypyConfigService.getMypyArguments());
         argumentsField.getEmptyText().setText(MypyBundle.message("config.optional"));
+        useDaemonCheckBox.setSelected(mypyConfigService.isUseDaemon());
     }
 
     public JPanel getPanel() {
@@ -90,6 +94,10 @@ public class MypyConfigPanel {
 
     public String getMypyArguments() {
         return argumentsField.getText();
+    }
+
+    public boolean getUseDaemon() {
+        return useDaemonCheckBox.isSelected();
     }
 
     @SuppressWarnings("unused")

@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jdesktop.swingx.util.OS;
 import org.jetbrains.annotations.NotNull;
+import com.leinardi.pycharm.mypy.MypyConfigService;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -35,9 +36,17 @@ import java.util.Optional;
  * Locate and/or create temporary directories for use by this plugin.
  */
 public class TempDirProvider {
+    public TempDirProvider(Project project) {
+        this.mypyConfigService = MypyConfigService.getInstance(project);
+    }
+
+    private final MypyConfigService mypyConfigService;
+
     public String forPersistedPsiFile(final PsiFile tempPsiFile) {
         String systemTempDir = System.getProperty("java.io.tmpdir");
-        if (OS.isWindows() && driveLetterOf(systemTempDir) != driveLetterOf(pathOf(tempPsiFile))) {
+        if (mypyConfigService.isUseDaemon() ||
+                (OS.isWindows() && driveLetterOf(systemTempDir) != driveLetterOf(pathOf(tempPsiFile)))) {
+            // for some reason the daemon reports no errors unless the file is in the project directory
             // Some tool on Windows requires the files to be on the same drive
             final File projectTempDir = temporaryDirectoryLocationFor(tempPsiFile.getProject());
             if (projectTempDir.exists() || projectTempDir.mkdirs()) {

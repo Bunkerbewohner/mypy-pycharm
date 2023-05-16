@@ -1,3 +1,6 @@
+**[0.16.0] 2023-05-16**
+- dmypy support
+
 **[0.15.0] 2023-04-24**
 - Fixed #107: Icons not visible in new Jetbrains UI
 - New: Min IDEA version raised from PC-2021.2 to PC-2022.1.4
